@@ -91,7 +91,7 @@ export default function MetricsBar({ websiteId, className }) {
             }
             value={
               totaltime.value && pageviews.value
-                ? totaltime.value / (pageviews.value - bounces.value)
+                ? totaltime.value / Math.max(1, uniques.value - bounces.value)
                 : 0
             }
             change={

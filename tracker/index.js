@@ -203,7 +203,7 @@
 
   if (autoTrack && !trackingDisabled()) {
     history.pushState = hook(history, 'pushState', handlePush);
-    history.replaceState = hook(history, 'replaceState', handlePush);
+    // history.replaceState = hook(history, 'replaceState', handlePush);
 
     const update = () => {
       if (document.readyState === 'complete') {

@@ -3,14 +3,14 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "cockroachdb"
   url      = env("DATABASE_URL")
 }
 
 model account {
-  id          Int       @id @default(autoincrement()) @map("user_id")
-  username    String    @unique @db.VarChar(255)
-  password    String    @db.VarChar(60)
+  id          Int       @id @default(sequence(start: 1, increment: 1)) @map("user_id")
+  username    String    @unique @db.String
+  password    String    @db.String
   isAdmin     Boolean   @default(false) @map("is_admin")
   createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
@@ -21,12 +21,12 @@ model account {
 }
 
 model event {
-  id        Int        @id() @default(autoincrement()) @map("event_id")
+  id        Int        @id() @default(sequence(start: 1, increment: 1)) @map("event_id")
   websiteId Int        @map("website_id")
   sessionId Int        @map("session_id")
   createdAt DateTime?  @default(now()) @map("created_at") @db.Timestamptz(6)
-  url       String     @db.VarChar(500)
-  eventName String     @map("event_name") @db.VarChar(50)
+  url       String     @db.String
+  eventName String     @map("event_name") @db.String
   eventUuid String     @unique @map("event_uuid") @db.Uuid
   session   session    @relation(fields: [sessionId], references: [id])
   website   website    @relation(fields: [websiteId], references: [id])
@@ -39,7 +39,7 @@ model event {
 }
 
 model eventData {
-  id        Int   @id @default(autoincrement()) @map("event_data_id")
+  id        Int   @id @default(sequence(start: 1, increment: 1)) @map("event_data_id")
   eventId   Int   @unique @map("event_id")
   eventData Json  @map("event_data")
   event     event @relation(fields: [eventId], references: [id])
@@ -48,12 +48,12 @@ model eventData {
 }
 
 model pageview {
-  id        Int       @id @default(autoincrement()) @map("view_id")
+  id        Int       @id @default(sequence(start: 1, increment: 1)) @map("view_id")
   websiteId Int       @map("website_id")
   sessionId Int       @map("session_id")
   createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
-  url       String    @db.VarChar(500)
-  referrer  String?   @db.VarChar(500)
+  url       String    @db.String
+  referrer  String?   @db.String
   session   session   @relation(fields: [sessionId], references: [id])
   website   website   @relation(fields: [websiteId], references: [id])
 
@@ -65,17 +65,17 @@ model pageview {
 }
 
 model session {
-  id          Int        @id @default(autoincrement()) @map("session_id")
+  id          Int        @id @default(sequence(start: 1, increment: 1)) @map("session_id")
   sessionUuid String     @unique @map("session_uuid") @db.Uuid
   websiteId   Int        @map("website_id")
   createdAt   DateTime?  @default(now()) @map("created_at") @db.Timestamptz(6)
-  hostname    String?    @db.VarChar(100)
-  browser     String?    @db.VarChar(20)
-  os          String?    @db.VarChar(20)
-  device      String?    @db.VarChar(20)
-  screen      String?    @db.VarChar(11)
-  language    String?    @db.VarChar(35)
-  country     String?    @db.Char(2)
+  hostname    String?    @db.String
+  browser     String?    @db.String
+  os          String?    @db.String
+  device      String?    @db.String
+  screen      String?    @db.String
+  language    String?    @db.String
+  country     String?    @db.String
   website     website?   @relation(fields: [websiteId], references: [id])
   events      event[]
   pageview    pageview[]
@@ -86,12 +86,12 @@ model session {
 }
 
 model website {
-  id          Int        @id @default(autoincrement()) @map("website_id")
+  id          Int        @id @default(sequence(start: 1, increment: 1)) @map("website_id")
   websiteUuid String     @unique @map("website_uuid") @db.Uuid
   userId      Int        @map("user_id")
-  name        String     @db.VarChar(100)
-  domain      String?    @db.VarChar(500)
-  shareId     String?    @unique @map("share_id") @db.VarChar(64)
+  name        String     @db.String
+  domain      String?    @db.String
+  shareId     String?    @unique @map("share_id") @db.String
   createdAt   DateTime?  @default(now()) @map("created_at") @db.Timestamptz(6)
   account     account    @relation(fields: [userId], references: [id])
   event       event[]
